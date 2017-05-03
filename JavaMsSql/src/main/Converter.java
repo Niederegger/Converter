@@ -26,12 +26,13 @@ public class Converter {
 	 * @param args this program is supposed to be run with the path+config name as arg[0]
 	 */
 	public static void main(String[] args) {
-		if (args.length <= 0 || args.length > 1) { // Ueberpruefen ob genau ein Argument, der Config-Pfad angegeben wurde.
-			System.err.println( //   wenn nicht, wird eine Error-Message geprintet
-					"Use this Programm like this: java -jar hiesp.jar 'Path of config'.	 Config Files end have the eding .conf");
-			return;//   und das Programm beendet
-		} else {
-			String file = args[0]; // lese den Pfad aus
+//		if (args.length <= 0 || args.length > 1) { // Ueberpruefen ob genau ein Argument, der Config-Pfad angegeben wurde.
+//			System.err.println( //   wenn nicht, wird eine Error-Message geprintet
+//					"Use this Programm like this: java -jar hiesp.jar 'Path of config'.	 Config Files end have the eding .conf");
+//			return;//   und das Programm beendet
+//		} else {
+//			
+			String file = "D:\\Alexey\\EclipseWorkspace\\JavaMsSql\\Configs\\some.conf";// args[0]; // lese den Pfad aus
 			if (BasicFunctions.checkConfigPath(file)) { // UeberPruefe ob dieser Pfad Ok ist
 				if (loadConfig(file)) { // falls der PFad korrekt ist, lade diese Config, und Ueberpruefe ob diese ebenfalls korrekt ist
 					programm(); // die Config wurde geladen und beinhaltet das richtige Fromat, nun kann der Konvertierung und uebergabe an die Datenbank beginnen
@@ -41,7 +42,7 @@ public class Converter {
 			} else {// der Pfad war nicht korrekt, ein Error wird geprintet
 				System.err.println("This Config file doesn't exists: " + file + ".");
 			}
-		}
+//		}
 	}
 
 	/**
