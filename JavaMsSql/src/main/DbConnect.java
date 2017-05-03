@@ -10,6 +10,10 @@ import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 
 public class DbConnect {
 
+	/**
+	 * sending all queries to Database
+	 * @param queries data from file
+	 */
 	public static void sendQueries(Vector<StringBuilder> queries){
 		// Declare the JDBC objects.
 		Connection con = null;
@@ -20,11 +24,11 @@ public class DbConnect {
 			// Establish the connection.
 			SQLServerDataSource ds = new SQLServerDataSource();
 			ds.setIntegratedSecurity(false);
-			ds.setUser(start.config.user);
-			ds.setPassword(start.config.pw);
-			ds.setServerName(start.config.serverName);
-			ds.setPortNumber(start.config.port);
-			ds.setDatabaseName(start.config.dbName);
+			ds.setUser(Converter.config.user);
+			ds.setPassword(Converter.config.pw);
+			ds.setServerName(Converter.config.serverName);
+			ds.setPortNumber(Converter.config.port);
+			ds.setDatabaseName(Converter.config.dbName);
 
 			con = ds.getConnection();
 			System.out.println("Connection success:");

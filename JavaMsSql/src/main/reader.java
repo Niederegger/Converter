@@ -5,69 +5,116 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
 
-public class reader {
+public class Reader {
 
+	/**
+	 * reads File and converts each entry into bunch of queries
+	 * @param file
+	 * @return
+	 */
 	public static Vector<StringBuilder> read(String file) {
-		Vector<StringBuilder> queries = new Vector<StringBuilder>();
+		// Sammlung der gesammten Query Bundles
+		Vector<StringBuilder> query_Collection = new Vector<StringBuilder>();
+		// Starte das File-Parsing
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-
-			String line;
-			int i = 0;
-			boolean added = false;
-			StringBuilder storedQuery = new StringBuilder();
-			while ((line = br.readLine()) != null ) { // && i < 100
-//				System.out.println(i +"\t-> "+line);
-				if(i >= 5){
-					
-					storedQuery.append(workLine(line));
-					if(qamt>= maxQueries){
-						queries.add(storedQuery);
-						storedQuery = new StringBuilder();
-						qamt = 0;
-						added = true;
-					} else added = false;
+			String line; // Akku fuer jeden Tabelleneintrag
+			// dieser Counter zaehlt die Eintraege bis die tatsaechlichen Werte beginnen
+			int counter = 0;
+			// diese flag schaut ob der akutelle Query-Bundle bereits der Query-Sammlung hinzugefuegt wurde
+			boolean query_added = false; 
+			// akku des Query-Bundles
+			StringBuilder query_Bundle = new StringBuilder();
+			// durchlaueft die Datei und verarbeitet die Eintraege
+			while ((line = br.readLine()) != null ) { 
+				// ab dem 5ten Eintrag beginnen die Werte, vorher
+				// kommen nur Header INformationen
+				if(counter >= 5){ // <- dieser parameter gehoert in die Config
+					// uebergabe des aktuellen Eintrages an die Ueberarbeitungsfunktion
+					// und anschließende konkatenation an den Query-Bundle
+					query_Bundle.append(workLine(line));
+					// Falls die anzahl der gebuendelten Query das vordefinierte Maximum
+					// ueberschreitet packe das Bundle in die Sammlung und starte ein neues
+					if(query_amount>= query_Maximum){
+						query_Collection.add(query_Bundle);
+						query_Bundle = new StringBuilder();
+						query_amount = 0;
+						query_added = true;
+					} else query_added = false;
 				}
-				
-					
-				i++;
-			}
-			if(!added)queries.add(storedQuery);
-
+				counter++;
+			} // falls das letzte Bundle noch nicht der Sammlung hinzugefuegt wurde, 
+			// fuege dieses ebenfalls der Sammlung hinzu
+			if(!query_added)query_Collection.add(query_Bundle);
 		} catch (IOException e) {
 			System.err.println("IOException: " + e.getMessage());
 			e.printStackTrace();
 		}
-		return queries;
+		return query_Collection;
 	}
 
-	public static final int maxQueries = 10000;
-	public static int qamt = 0;
+	// diesen Wert moechte ich in der Config fest setzen
+	public static final int query_Maximum = 10000;
+	// dieser Wert wird in workLine inkrementiert sodass
+	// die Funktion read weiss wie viele Queries bereits akkumuliert wurden
+	public static int query_amount = 0;
+	
+	/**
+	 * gets a TableRow and converts all necessary Data into queries
+	 * @param line
+	 * @return
+	 */
 	public static StringBuilder workLine(String line) {
-		String[] sa = line.split(";");
-		if (sa.length == 123) { // this parameter has to be changeable <- put it into a config
-			String[] row = line.split(start.config.Seperator);
-			String[] values = getDefValues(row);
-			StringBuilder query = new StringBuilder();
-			String value;
-			String fieldName;
-			for (int i = 0; i < start.config.MasterValuesFields.length; i++) {
-				value = row[start.config.Positions[i]];
-				if(value != null && !value.equals("")){ // if value isn't null and empty, create a query
-					fieldName = start.config.MasterValuesFields[i];
-					query.append(createQuery(fieldName, checkValue(value, fieldName), values[0], values[1], (start.config.MV_AS_OF_DATE_NEEDED[i] ? values[2] : null)));
+		String[] columns = line.split(Converter.config.Seperator); 
+		if (columns.length == 123) { // this parameter has to be changeable <- put it into a config
+			// i -ISIN
+			// m - MIC
+			// d - Date
+			String[] imdValues = getDefValues(columns); // hier werden die Werte von ISIN, MIC und Datum aus der Reihe akkumuliert
+			StringBuilder query = new StringBuilder(); 
+			String fieldValue; // diese Variable akkumiliert den Wert
+			String fieldName; // diese Variable akkumuliert den Feldnamen
+			// nun werden alle Feldnamen abgearbeitet und somit die Daten aus dem Tabelleneintrag verarbeitet
+			for (int i = 0; i < Converter.config.MasterValuesFields.length; i++) {
+				fieldValue = columns[Converter.config.Positions[i]]; // hohlt den Wert aus dem Vordefinierten Bereich
+				if(fieldValue != null && !fieldValue.equals("")){ // if value isn't null and empty, create a query
+					fieldName = Converter.config.MasterValuesFields[i]; // hohlt den Feldnamen aus der Matrix
+					// der Wert wird mit dem Feldnamen an die Funktion uebermittelt, welche daraus eine Query
+					// schreibt und diese der Query Sammlung hinzufuegt
+					query.append(createQuery( //  aufruf zur Erstellung der Query
+							fieldName,  //  uebergabe des Feldnamens
+							controlValue(fieldValue, fieldName), // uebergabe des korigierten Wertes
+							imdValues[0],  // uebergabe von der ISIN
+							imdValues[1],  // uebergabe der MIC
+							// anschließend wird das Datum uebergeben, hier muss geschaut werden
+							// ob der Feldname so definiert wurde, dass ein Ist-Datum benoetigt wird
+							(Converter.config.MV_AS_OF_DATE_NEEDED[i] ? imdValues[2] : null)));
 					query.append("\n");	
-					qamt++;
+					query_amount++; // inkrementiere den Query-Zaehler
 				}
 			}
 			return query;
 		} else {
+			// Hier war der Tabellen eintrag Fehlerhaft, dieser soll anschließend
+			// an einem Ort Akkumuliert werden um gegebenfalls abgearbeitet werden zu koennen
+			// oder die Fehlerstelle abzuarbeiten
 			return new StringBuilder("");
 			// save line in backup, this line didn't work properly
 		}
 	}
 
-	public static String checkValue(String value, String fieldName){
+	/**
+	 * Cheks value and repairs it if it's faulty
+	 * @param value
+	 * @param fieldName
+	 * @return
+	 */
+	public static String controlValue(String value, String fieldName){
+		// falls der String eine Apostroph beinhaltet wird diesem ein 2ter angehangen,
+		// weil Apostroph ein Sonderzeichen in SQL ist,
 		if(value.contains("'")) value = value.replaceAll("'", "''");
+		// Die WKN ist teils Fehlerhaft abgespeichert (besteht nur aus 6 Zeichen)
+		// deshalb werden die ersten Zeichen so abgeschnitten, dass die WKN nur noch
+		// aus den letzten 6 Zeichen besteht
 		if(fieldName.equals("WKN") && value.length()>6)value=value.substring(value.length()-6, value.length());
 		return value;
 	}
@@ -83,54 +130,68 @@ public class reader {
 	 */
 	public static String[] getDefValues(String[] line) {
 		String[] ret = new String[3];
-		ret[0] = line[start.config.IsinPosition];
-		ret[1] = line[start.config.MicPosition];
-		ret[2] = line[start.config.DatePosition];
-		String[] date = ret[2].split("\\.");
-		if(date.length != 3){
+		ret[0] = line[Converter.config.IsinPosition]; // hohlt die ISIN aus der Datei-Tabelle
+		ret[1] = line[Converter.config.MicPosition];  // hohlt die MIC aus der Dateie-Tabelle
+		ret[2] = line[Converter.config.DatePosition]; // hohlt das Datum aus der Datei-Tabelle
+		String[] date = ret[2].split("\\."); 		  
+		if(date.length != 3){	// hier ist ein Fehler im Format des Datums
 			System.err.println("Corrupted Date: " + ret[2]);
 			ret[2] = null;
-		} else {
+		} else { // Konvertiert das Datum in das akzeptierte DB format
 			ret[2] = date[2] + date[1] + date[0];
 		}
-		
 		return ret;
 	}
 
+	/**
+	 * creates query for one insert to db
+	 * @param fieldName
+	 * @param value
+	 * @param ISIN
+	 * @param MIC
+	 * @param Date
+	 * @return
+	 */
 	public static StringBuilder createQuery(String fieldName, String value, String ISIN, String MIC, String Date) {
-		StringBuilder sb = new StringBuilder();
+		// diese funktion konvertiert ein Feldname/Value paar in eine Query
+		// ein Beispiel:
+		// Insert vv_mastervalues_upload ( MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_DATA_ORIGIN, MVU_URLSOURCE, MVU_COMMENT ) 
+		// values ('DBAG', 'AN8068571086', 'XETR', 'Mnemonic', 'SCL', '20170427 allTradableInstruments.txt', 'http://www.deutsche-boerse-cash-market.com/dbcm-de/instrumente-statistiken/alle-handelbaren-instrumente/boersefrankfurt', 'Manuell von Kay');
+		// Achtung: Das arbeiten mit Strings kostet sehr viele Resourcen
+		// -> deshalb mit StringBuilder
+		StringBuilder query = new StringBuilder();
 		String Head1 = "Insert vv_mastervalues_upload ( MVU_SOURCE_ID, MVU_ISIN, MVU_MIC,";
 		String Head2 = " MVU_FIELDNAME, MVU_STRINGVALUE, MVU_DATA_ORIGIN, MVU_URLSOURCE, MVU_COMMENT )";
 		String ASOFDATE = "MVU_AS_OF_DATE,";
 		String Values1 = " values ( ";
 		String Values2 = "' );";
-		sb.append(Head1);
+		query.append(Head1);
 		if (Date != null) {
-			sb.append(ASOFDATE);
+			query.append(ASOFDATE);
 		}
-		sb.append(Head2);
-		sb.append(Values1);
-		sb.append("'");
-		sb.append(start.config.Source_ID);
-		sb.append("', '");
-		sb.append(ISIN);
-		sb.append("', '");
-		sb.append(MIC);
-		sb.append("', '");
+		query.append(Head2);
+		query.append(Values1);
+		query.append("'");
+		query.append(Converter.config.Source_ID);
+		query.append("', '");
+		query.append(ISIN);
+		query.append("', '");
+		query.append(MIC);
+		query.append("', '");
 		if (Date != null) {
-			sb.append(Date);
-			sb.append("', '");
+			query.append(Date);
+			query.append("', '");
 		}
-		sb.append(fieldName);
-		sb.append("', '");
-		sb.append(value);
-		sb.append("', '");
-		sb.append(start.config.File);
-		sb.append("', '");
-		sb.append(start.config.URLSource);
-		sb.append("', '");
-		sb.append(start.config.Comment);
-		sb.append(Values2);
-		return sb;
+		query.append(fieldName);
+		query.append("', '");
+		query.append(value);
+		query.append("', '");
+		query.append(Converter.config.File);
+		query.append("', '");
+		query.append(Converter.config.URLSource);
+		query.append("', '");
+		query.append(Converter.config.Comment);
+		query.append(Values2);
+		return query;
 	}
 }

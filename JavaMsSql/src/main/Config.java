@@ -3,6 +3,7 @@ package main;
 public class Config {
 	/**
 	 * MasterValuesTable (mvt) represents MasterTable
+	 * currently not in use?!
 	 */
 	public String[] MasterValuesTable = { 
 			"MVU_SOURCE_ID", 
@@ -68,24 +69,25 @@ public class Config {
 	/**
 	 * stores MV_AS_OF_DATE
 	 */
-	public int DatePosition = 0;
-	public int IsinPosition = 2;
-	public int MicPosition = 6;
+	public int DatePosition = 0; // Position des Datums innerhalb der Tabelle
+	public int IsinPosition = 2; // Position der ISIN innerhalb der Tabell
+	public int MicPosition = 6; // Position der MIC innerhalb der Tabelle
 	
-	public String Seperator = ";";
+	public String Seperator = ";"; // Der Seperator der genutzt wird um in der csv File die Trennung  der einzelnen Einträge zu erstellen
 	
-	public String Source_ID = "DBAG";
-	public String URLSource = "http://www.deutsche-boerse-cash-market.com/dbcm-de/instrumente-statistiken/alle-handelbaren-instrumente/boersefrankfurt";
-	
+	public String Source_ID = "DBAG"; // Die ID die diesem Dokument zugewießen ist
+	// das ist die Website, von der das Dokument runtergeladen wurde
+	public String URLSource = "http://www.deutsche-boerse-cash-market.com/dbcm-de/instrumente-statistiken/alle-handelbaren-instrumente/boersefrankfurt"; 
+	// die File die eingelesen und in die Datenbank geschrieben werden soll <- hier wird sich eventuell noch was aendern
 	public String File = "allTradableInstruments_2017_April_19_02_00";
-	public String FileEnding = ".csv";
-	public String Path = "D:\\Alexey\\EclipseWorkspace\\JavaMsSql\\files\\";
-	
+	public String FileEnding = ".csv"; // das fileEnding beschriebt die Endung der File, und somit auch den DateiTyp
+	public String Path = "D:\\Alexey\\EclipseWorkspace\\JavaMsSql\\files\\"; // Hier wird der Pfad angegeben in welchem sich die Datei befindet
+	// dieser Komment wird mit in die Query geschleust
 	public String Comment = "Erstellt mit Java";
-	
-	public String user = "TestUser";
-	public String pw = "TestUser";
-	public String serverName = "ACER-2016\\SQLEXPRESS";
-	public String dbName = "MasterData";
-	public int port = 1433;
+	// anschließend folgen !WICHTGE! SQL daten
+	public String user = "TestUser"; // User zum arbeiten mit der SQL Datenbnak
+	public String pw = "TestUser"; // das Password des Users
+	public String serverName = "ACER-2016\\SQLEXPRESS"; // Der Server-Name des SQL-Servers
+	public String dbName = "MasterData"; // Der DatenBank Name
+	public int port = 1433; // der Port ueber welchen der Zugriff gestattet ist
 }
