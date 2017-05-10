@@ -6,12 +6,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+
 public class Converter {
+	final static Logger logger = LoggerFactory.getLogger(Converter.class);
 
 	public static Config config = new Config();
 
@@ -34,8 +39,7 @@ public class Converter {
 	public static void main(String[] args) {
 		// Program takes one Parameter: location of config.conf
 		if (args.length <= 0 || args.length > 1) {
-			System.err.println(
-					"Use this Programm like this: java -jar hiesp.jar 'Path of config'.	 Config Files end have the eding .conf");
+			logger.error("Invalid amount of arguments: {}", args.length);
 			return;
 		} else {
 			// try to load config
@@ -45,12 +49,14 @@ public class Converter {
 				// is it possible to load config?
 				if (loadConfig(file)) {
 					// start programm
+					logger.info("Converter start.");
 					programm();
-				} else { // faulty config
-					System.err.println("This Config file doesn't fit the definition.");
-				}
-			} else {// file doesn't exist
-				System.err.println("This Config file doesn't exists: " + file + ".");
+					logger.info("Converter end.");
+				} else { 
+					logger.error("Invalid Config: {}",file);
+				} 
+			} else {
+				logger.error("Invalid Config path and/or name: {}",file);
 			}
 		}
 	}
@@ -63,13 +69,12 @@ public class Converter {
 		File file = getFile();
 		if (file != null) {
 			// changing filename -> this file is in use
-			System.out.println("Renaming file");
+			logger.info("Occupying file: {}",file);
 			String newFile = renameFile(file);
-			System.out.println("File renamed");
 			DbConnect.sendQueries(Reader.read(config.Path + newFile));
 			moveFile(config.Path + newFile, config.Path + "bak\\" + file.getName());
 		} else {
-			System.err.println("No file found.");
+			logger.error("File not found: {}",file);
 		}
 
 	}
@@ -147,11 +152,11 @@ public class Converter {
 			config = gson.fromJson(new FileReader(file), Config.class);
 			return true;
 		} catch (JsonSyntaxException e) {
-			System.err.println("JsonSyntaxException: " + e.getMessage());
+			logger.error("JsonSyntaxException: {}", e.getMessage());
 		} catch (JsonIOException e) {
-			System.err.println("JsonIOException: " + e.getMessage());
+			logger.error("JsonIOException: {}", e.getMessage());
 		} catch (FileNotFoundException e) {
-			System.err.println("FileNotFoundException: " + e.getMessage());
+			logger.error("FileNotFoundException: {}", e.getMessage());
 		}
 		return false;
 	}

@@ -4,7 +4,13 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.core.util.Loader;
+
 public class Reader {
+	final static Logger logger = LoggerFactory.getLogger(Loader.class);
 
 	/**
 	 * reads File and converts each entry into bunch of queries
@@ -13,7 +19,7 @@ public class Reader {
 	 * @return
 	 */
 	public static ContainerQuery read(String file) {
-		System.out.println("started Reading");
+		logger.info("Converter start.");
 		ContainerQuery query_container = new ContainerQuery(Converter.config.Source_ID, Converter.config.File,
 				Converter.config.URLSource, Converter.config.Comment);
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -28,10 +34,9 @@ public class Reader {
 				counter++;
 			}
 		} catch (IOException e) {
-			System.err.println("IOException: " + e.getMessage());
-			e.printStackTrace();
+			logger.error("IOException: {}",e.getMessage());
 		}
-		System.out.println("finished Reading");
+		logger.info("Converter end.");
 		return query_container;
 	}
 
@@ -53,6 +58,7 @@ public class Reader {
 
 			return row_container;
 		} else {
+			logger.trace(line);
 			return null;
 		}
 	}
@@ -73,7 +79,7 @@ public class Reader {
 		String[] date = ret[2].split("\\.");
 		if (date.length != 3) { // date is supposed to vontains 3 values:
 								// yyyy,mm,dd
-			System.err.println("Corrupted Date: " + ret[2]);
+			logger.error("Corrupted Date: {}", ret[2]);
 			ret[2] = null;
 		} else { // changing date order
 			ret[2] = date[2] + date[1] + date[0];

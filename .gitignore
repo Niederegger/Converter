@@ -1,6 +1,8 @@
 *.class
 bin/
 converter/preCompiled/Destination/
+converter/target/
+
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

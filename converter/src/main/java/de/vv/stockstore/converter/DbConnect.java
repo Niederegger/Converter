@@ -7,10 +7,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 
+import ch.qos.logback.core.util.Loader;
+
 public class DbConnect {
+	final static Logger logger = LoggerFactory.getLogger(Loader.class);
 
 	/**
 	 * sending all queries to Database
@@ -24,16 +30,17 @@ public class DbConnect {
 		CallableStatement cstmt = null;
 		ResultSet rs = null;
 		SQLServerDataSource ds = new SQLServerDataSource();
-		System.out.println("Starting SQL connection");
+		logger.info("Establishing SQL connection.");
 		try {
 			// Establish the connection.
 			con = establishConnection(ds);
 			// execute queries
 			executeQueries(queries, con);
+			con.close();
 		}
 		// Handle any errors that may have occurred.
 		catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Exception: {}", e.getMessage());
 		} finally {
 			errorHandling(con, cstmt, rs);
 		}
@@ -44,22 +51,25 @@ public class DbConnect {
 			try {
 				rs.close();
 			} catch (Exception e) {
+				logger.error("Exception: {}", e.getMessage());
 			}
 		if (cstmt != null)
 			try {
 				cstmt.close();
 			} catch (Exception e) {
+				logger.error("Exception: {}", e.getMessage());
 			}
 		if (con != null)
 			try {
 				con.close();
 			} catch (Exception e) {
+				logger.error("Exception: {}", e.getMessage());
 			}
 	}
 
 	private static void executeQueries(ContainerQuery queries, Connection con) throws SQLException {
 		Statement stmt = con.createStatement();
-		System.out.println("starting queries");
+		logger.info("starting queries");
 		// default insert query for preparedStatement
 		String insertDefault = "INSERT INTO vv_mastervalues_upload"
 				+ "(MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_DATA_ORIGIN, MVU_URLSOURCE, MVU_COMMENT) VALUES"
@@ -81,13 +91,8 @@ public class DbConnect {
 				// or not
 				preparedStatement = con.prepareStatement(aod ? insertWithDate : insertDefault);
 				preparedStatement.setString(stmtCount++, queries.sourceId);
-				if(qr == null){
-					System.out.println("qr==null");
-					System.out.println(qr);
-				}
-				if(qr.ISIN == null){
-					System.out.println("QR:ISIN==null");
-					System.out.println(qr);
+				if (qr == null) {
+					logger.error("Invalid ContainerRow {}", qr);
 				}
 				preparedStatement.setString(stmtCount++, qr.ISIN);
 				preparedStatement.setString(stmtCount++, qr.MIC);
@@ -101,18 +106,15 @@ public class DbConnect {
 				preparedStatement.executeUpdate();
 				stmtCount = 1;
 			}
-			if(count++ > 1000){
+			if (count++ > 1000) {
 				done++;
-				System.out.println("Done: " + done*1000);
+				logger.info("Queries sent: {}", done * 9000);
 				count = 0;
 			}
-			// // execute insert SQL stetement
-			// stmt.executeUpdate(q.toString());
-			// System.out.println("chunk " +count+++ " finished: " + "");
 		}
-		System.out.println("starting StoredProcedure");
+		logger.info("starting StoredProcedure");
 		stmt.executeUpdate("exec vvsp_import_upload");
-		System.out.println("completed");
+		logger.info("completed StoredProcedure");
 	}
 
 	private static Connection establishConnection(SQLServerDataSource ds) throws SQLServerException {
@@ -124,7 +126,7 @@ public class DbConnect {
 		ds.setPortNumber(Converter.config.port);
 		ds.setDatabaseName(Converter.config.dbName);
 		con = ds.getConnection();
-		System.out.println("Connection success:");
+		logger.info("Connection successeded");
 		return con;
 	}
 
