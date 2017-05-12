@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<property name="DEV_HOME" value="./log" />
+	<property name="DEV_HOME" value="./log_Converter" />
 
 	<appender name="FILE-INSERT-TRACE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">

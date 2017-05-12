@@ -1,9 +1,6 @@
 package de.vv.stockstore.converter;
 
 import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * 
  * @author Alexey Gasevic

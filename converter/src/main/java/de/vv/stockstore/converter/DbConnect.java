@@ -13,10 +13,8 @@ import org.slf4j.LoggerFactory;
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 
-import ch.qos.logback.core.util.Loader;
-
 public class DbConnect {
-	final static Logger logger = LoggerFactory.getLogger(Loader.class);
+	final static Logger logger = LoggerFactory.getLogger(DbConnect.class);
 
 	/**
 	 * sending all queries to Database

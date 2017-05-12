@@ -7,10 +7,8 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.core.util.Loader;
-
 public class Reader {
-	final static Logger logger = LoggerFactory.getLogger(Loader.class);
+	final static Logger logger = LoggerFactory.getLogger(Reader.class);
 
 	/**
 	 * reads File and converts each entry into bunch of queries
