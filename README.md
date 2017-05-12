@@ -5,6 +5,17 @@ This project is used to parsed data from a .csv file to a Microsoft SQL Database
 
 ## Installation
 
+
+Using Maven:
+Compiling with Maven:
+Enter Folder and use this command to compile
+```
+mvn clean package
+```
+clean deletes old compilations, package creates an executable jar
+if you want to run this program, copy the executable jar and folder 'dependency-jars' into your destinated location
+further follow old steps
+
 You can find a precompiled version here: 'Converter/converter/preCompiled/'. Follow the next steps to run this program:
 1. Use the precompiled Jar or compile your own one.
 2. Choose a directory where your files are placed. Create a directory named bak inside this one.
