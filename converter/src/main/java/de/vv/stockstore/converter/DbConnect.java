@@ -13,16 +13,20 @@ import org.slf4j.LoggerFactory;
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 
+import de.vv.stockstore.converter.esma.registers_mifid_sha.Entry;
+import de.vv.stockstore.converter.esma.registers_mifid_sha.EntryList;
+import de.vv.stockstore.converter.esma.registers_mifid_sha.EntryLookUp;
+
 public class DbConnect {
 	final static Logger logger = LoggerFactory.getLogger(DbConnect.class);
 
 	/**
 	 * sending all queries to Database
 	 * 
-	 * @param queries
+	 * @param entries
 	 *            data from file
 	 */
-	public static void sendQueries(ContainerQuery queries) {
+	public static void sendQueries(EntryList entries) {
 		// Declare the JDBC objects.
 		Connection con = null;
 		CallableStatement cstmt = null;
@@ -33,7 +37,7 @@ public class DbConnect {
 			// Establish the connection.
 			con = establishConnection(ds);
 			// execute queries
-			executeQueries(queries, con);
+			executeQueries(entries, con);
 			con.close();
 		}
 		// Handle any errors that may have occurred.
@@ -65,7 +69,7 @@ public class DbConnect {
 			}
 	}
 
-	private static void executeQueries(ContainerQuery queries, Connection con) throws SQLException {
+	private static void executeQueries(EntryList entries, Connection con) throws SQLException {
 		Statement stmt = con.createStatement();
 		logger.info("starting queries");
 		// default insert query for preparedStatement
@@ -82,31 +86,207 @@ public class DbConnect {
 		boolean aod = false;
 		int count = 0;
 		int done = 0;
-		for (ContainerRow qr : queries.rows) {
-			for (int i = 0; i < Converter.config.MasterValuesFields.length; i++) {
-				aod = Converter.config.MV_AS_OF_DATE_NEEDED[i];
-				// loads prepared statement depending whether needed as of date
-				// or not
-				preparedStatement = con.prepareStatement(aod ? insertWithDate : insertDefault);
-				preparedStatement.setString(stmtCount++, queries.sourceId);
-				if (qr == null) {
-					logger.error("Invalid ContainerRow {}", qr);
-				}
-				preparedStatement.setString(stmtCount++, qr.ISIN);
-				preparedStatement.setString(stmtCount++, qr.MIC);
-				if (aod)
-					preparedStatement.setString(stmtCount++, qr.AOD);
-				preparedStatement.setString(stmtCount++, Converter.config.MasterValuesFields[i]);
-				preparedStatement.setString(stmtCount++, qr.values[i]);
-				preparedStatement.setString(stmtCount++, queries.dataOrigin);
-				preparedStatement.setString(stmtCount++, queries.urlSource);
-				preparedStatement.setString(stmtCount++, queries.comment);
-				preparedStatement.executeUpdate();
-				stmtCount = 1;
+		for (Entry entry : entries.response.docs) {
+			// _root_
+			if (entry == null) {
+				logger.error("Invalid Entry {}", entry);
+				continue;
 			}
-			if (count++ > 1000) {
+			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
+			preparedStatement.setString(stmtCount++, entry.sha_isin);
+			preparedStatement.setString(stmtCount++, "");// entry.MIC);
+			preparedStatement.setString(stmtCount++, EntryLookUp._root_);
+			preparedStatement.setString(stmtCount++, entry._root_);
+			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
+			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
+			preparedStatement.executeUpdate();
+			stmtCount = 1;
+			// sha_modificationDateStr
+			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
+			preparedStatement.setString(stmtCount++, entry.sha_isin);
+			preparedStatement.setString(stmtCount++, "");// entry.MIC);
+			preparedStatement.setString(stmtCount++, EntryLookUp.sha_modificationDateStr);
+			preparedStatement.setString(stmtCount++, entry.sha_modificationDateStr);
+			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
+			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
+			preparedStatement.executeUpdate();
+			stmtCount = 1;
+			// sha_countryCode
+			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
+			preparedStatement.setString(stmtCount++, entry.sha_isin);
+			preparedStatement.setString(stmtCount++, "");// entry.MIC);
+			preparedStatement.setString(stmtCount++, EntryLookUp.sha_countryCode);
+			preparedStatement.setString(stmtCount++, entry.sha_countryCode);
+			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
+			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
+			preparedStatement.executeUpdate();
+			stmtCount = 1;
+			// sha_relevantAuthority
+			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
+			preparedStatement.setString(stmtCount++, entry.sha_isin);
+			preparedStatement.setString(stmtCount++, "");// entry.MIC);
+			preparedStatement.setString(stmtCount++, EntryLookUp.sha_relevantAuthority);
+			preparedStatement.setString(stmtCount++, entry.sha_modificationDateStr);
+			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
+			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
+			preparedStatement.executeUpdate();
+			stmtCount = 1;
+			// sha_exchangeRate
+			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
+			preparedStatement.setString(stmtCount++, entry.sha_isin);
+			preparedStatement.setString(stmtCount++, "");// entry.MIC);
+			preparedStatement.setString(stmtCount++, EntryLookUp.sha_exchangeRate);
+			preparedStatement.setString(stmtCount++, entry.sha_exchangeRate);
+			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
+			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
+			preparedStatement.executeUpdate();
+			stmtCount = 1;
+			// sha_name
+			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
+			preparedStatement.setString(stmtCount++, entry.sha_isin);
+			preparedStatement.setString(stmtCount++, "");// entry.MIC);
+			preparedStatement.setString(stmtCount++, EntryLookUp.sha_name);
+			preparedStatement.setString(stmtCount++, entry.sha_name);
+			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
+			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
+			preparedStatement.executeUpdate();
+			stmtCount = 1;
+			// sha_sms
+			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
+			preparedStatement.setString(stmtCount++, entry.sha_isin);
+			preparedStatement.setString(stmtCount++, "");// entry.MIC);
+			preparedStatement.setString(stmtCount++, EntryLookUp.sha_sms);
+			preparedStatement.setString(stmtCount++, entry.sha_sms);
+			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
+			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
+			preparedStatement.executeUpdate();
+			stmtCount = 1;
+			// sha_status
+			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
+			preparedStatement.setString(stmtCount++, entry.sha_isin);
+			preparedStatement.setString(stmtCount++, "");// entry.MIC);
+			preparedStatement.setString(stmtCount++, EntryLookUp.sha_status);
+			preparedStatement.setString(stmtCount++, entry.sha_status);
+			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
+			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
+			preparedStatement.executeUpdate();
+			stmtCount = 1;
+			// sha_dailyTransactions
+			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
+			preparedStatement.setString(stmtCount++, entry.sha_isin);
+			preparedStatement.setString(stmtCount++, "");// entry.MIC);
+			preparedStatement.setString(stmtCount++, EntryLookUp.sha_dailyTransactions);
+			preparedStatement.setString(stmtCount++, entry.sha_dailyTransactions);
+			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
+			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
+			preparedStatement.executeUpdate();
+			stmtCount = 1;
+			// id
+			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
+			preparedStatement.setString(stmtCount++, entry.sha_isin);
+			preparedStatement.setString(stmtCount++, "");// entry.MIC);
+			preparedStatement.setString(stmtCount++, EntryLookUp.id);
+			preparedStatement.setString(stmtCount++, entry.id);
+			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
+			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
+			preparedStatement.executeUpdate();
+			stmtCount = 1;
+			// sha_type
+			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
+			preparedStatement.setString(stmtCount++, entry.sha_isin);
+			preparedStatement.setString(stmtCount++, "");// entry.MIC);
+			preparedStatement.setString(stmtCount++, EntryLookUp.sha_type);
+			preparedStatement.setString(stmtCount++, entry.sha_type);
+			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
+			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
+			preparedStatement.executeUpdate();
+			stmtCount = 1;
+			// sha_freeFloatRange
+			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
+			preparedStatement.setString(stmtCount++, entry.sha_isin);
+			preparedStatement.setString(stmtCount++, "");// entry.MIC);
+			preparedStatement.setString(stmtCount++, EntryLookUp.sha_freeFloatRange);
+			preparedStatement.setString(stmtCount++, entry.sha_freeFloatRange);
+			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
+			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
+			preparedStatement.executeUpdate();
+			stmtCount = 1;
+			// sha_adt
+			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
+			preparedStatement.setString(stmtCount++, entry.sha_isin);
+			preparedStatement.setString(stmtCount++, "");// entry.MIC);
+			preparedStatement.setString(stmtCount++, EntryLookUp.sha_adt);
+			preparedStatement.setString(stmtCount++, entry.sha_adt);
+			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
+			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
+			preparedStatement.executeUpdate();
+			stmtCount = 1;
+			// sha_avt
+			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
+			preparedStatement.setString(stmtCount++, entry.sha_isin);
+			preparedStatement.setString(stmtCount++, "");// entry.MIC);
+			preparedStatement.setString(stmtCount++, EntryLookUp.sha_avt);
+			preparedStatement.setString(stmtCount++, entry.sha_avt);
+			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
+			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
+			preparedStatement.executeUpdate();
+			stmtCount = 1;
+			// _version_
+			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
+			preparedStatement.setString(stmtCount++, entry.sha_isin);
+			preparedStatement.setString(stmtCount++, "");// entry.MIC);
+			preparedStatement.setString(stmtCount++, EntryLookUp._version_);
+			preparedStatement.setString(stmtCount++, entry._version_);
+			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
+			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
+			preparedStatement.executeUpdate();
+			stmtCount = 1;
+			// timestamp
+			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
+			preparedStatement.setString(stmtCount++, entry.sha_isin);
+			preparedStatement.setString(stmtCount++, "");// entry.MIC);
+			preparedStatement.setString(stmtCount++, EntryLookUp.timestamp);
+			preparedStatement.setString(stmtCount++, entry.timestamp);
+			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
+			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
+			preparedStatement.executeUpdate();
+			stmtCount = 1;
+			count += 16;
+			if (count > 100) {
 				done++;
-				logger.info("Queries sent: {}", done * 9000);
+				logger.info("Queries sent: {}", done * 16 * 100);
 				count = 0;
 			}
 		}

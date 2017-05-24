@@ -14,6 +14,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import de.vv.stockstore.converter.esma.registers_mifid_sha.EntryList;
+import de.vv.stockstore.converter.esma.registers_mifid_sha.ParseRegistersMifidSha;
+
 
 public class Converter {
 	final static Logger logger = LoggerFactory.getLogger(Converter.class);
@@ -71,12 +74,18 @@ public class Converter {
 			// changing filename -> this file is in use
 			logger.info("Occupying file: {}",file);
 			String newFile = renameFile(file);
-			DbConnect.sendQueries(Reader.read(config.Path + newFile));
+			EntryList el = new EntryList();
+			DbConnect.sendQueries((EntryList)jsonWork(config.Path + newFile, el));//; Reader.read(config.Path + newFile));
 			moveFile(config.Path + newFile, config.Path + "bak\\" + file.getName());
 		} else {
 			logger.error("File not found: {}",file);
 		}
 
+	}
+	
+	private static Object jsonWork(String file, Object o) {
+		o = ParseRegistersMifidSha.loadConfig(file, o);
+		return o;
 	}
 
 	/**
