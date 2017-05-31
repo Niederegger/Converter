@@ -133,7 +133,7 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp.sha_relevantAuthority);
-			preparedStatement.setString(stmtCount++, entry.sha_modificationDateStr);
+			preparedStatement.setString(stmtCount++, entry.sha_relevantAuthority);
 			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
 			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
