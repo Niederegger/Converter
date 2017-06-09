@@ -70,12 +70,12 @@ public class DbConnect {
 		logger.info("starting queries");
 		// default insert query for preparedStatement
 		String insertDefault = "INSERT INTO vv_mastervalues_upload"
-				+ "(MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_DATA_ORIGIN, MVU_URLSOURCE, MVU_COMMENT) VALUES"
-				+ "(?,?,?,?,?,?,?,?)";
+				+ "(MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_COMMENT) VALUES"
+				+ "(?,?,?,?,?,?);";
 		// date insert query for preparedStatement
 		String insertWithDate = "INSERT INTO vv_mastervalues_upload"
-				+ "(MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_AS_OF_DATE, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_DATA_ORIGIN, MVU_URLSOURCE, MVU_COMMENT) VALUES"
-				+ "(?,?,?,?,?,?,?,?,?)";
+				+ "(MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_AS_OF_DATE, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_COMMENT) VALUES"
+				+ "(?,?,?,?,?,?,?);";
 
 		PreparedStatement preparedStatement = null;
 		int stmtCount = 1;
@@ -98,8 +98,6 @@ public class DbConnect {
 					preparedStatement.setString(stmtCount++, qr.AOD);
 				preparedStatement.setString(stmtCount++, Converter.config.MasterValuesFields[i]);
 				preparedStatement.setString(stmtCount++, qr.values[i]);
-				preparedStatement.setString(stmtCount++, queries.dataOrigin);
-				preparedStatement.setString(stmtCount++, queries.urlSource);
 				preparedStatement.setString(stmtCount++, queries.comment);
 				preparedStatement.executeUpdate();
 				stmtCount = 1;
@@ -111,7 +109,15 @@ public class DbConnect {
 			}
 		}
 		logger.info("starting StoredProcedure");
-		stmt.executeUpdate("exec vvsp_import_upload");
+		stmtCount = 1;
+		logger.info("starting StoredProcedure");
+		preparedStatement = con.prepareStatement("exec vvsp_import_uploadV2 ?, ?, ?, ?;");
+		preparedStatement.setString(stmtCount++, Converter.config.Source_ID); // SourceId
+		preparedStatement.setString(stmtCount++, Converter.config.File); // Data Origin
+		preparedStatement.setString(stmtCount++, Converter.config.URLSource); // UrlSource
+		preparedStatement.setString(stmtCount++, Converter.config.Comment); // Comment
+		preparedStatement.executeUpdate();
+		logger.info("completed StoredProcedure");
 		logger.info("completed StoredProcedure");
 	}
 

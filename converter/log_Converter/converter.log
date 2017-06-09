@@ -1,0 +1,12 @@
+2017-06-09 10:36:07 - INFO  de.vv.stockstore.converter.Converter - Converter start.
+2017-06-09 10:36:07 - INFO  de.vv.stockstore.converter.Converter - Occupying file: D:\StockStore\Data\allTradableInstruments_2017_Mai_31_01_52.csv
+2017-06-09 10:36:07 - INFO  de.vv.stockstore.converter.Reader - Converter start.
+2017-06-09 10:36:07 - INFO  de.vv.stockstore.converter.Reader - Converter end.
+2017-06-09 10:36:07 - INFO  de.vv.stockstore.converter.DbConnect - Establishing SQL connection.
+2017-06-09 10:36:09 - INFO  de.vv.stockstore.converter.DbConnect - Connection successeded
+2017-06-09 10:36:10 - INFO  de.vv.stockstore.converter.DbConnect - starting queries
+2017-06-09 10:36:11 - INFO  de.vv.stockstore.converter.DbConnect - starting StoredProcedure
+2017-06-09 10:36:11 - INFO  de.vv.stockstore.converter.DbConnect - starting StoredProcedure
+2017-06-09 10:36:11 - INFO  de.vv.stockstore.converter.DbConnect - completed StoredProcedure
+2017-06-09 10:36:11 - INFO  de.vv.stockstore.converter.DbConnect - completed StoredProcedure
+2017-06-09 10:36:11 - INFO  de.vv.stockstore.converter.Converter - Converter end.
