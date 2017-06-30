@@ -84,7 +84,7 @@ public class Config {
 	public String Path = "D:\\Alexey\\EclipseWorkspace\\JavaMsSql\\files\\"; // Hier wird der Pfad angegeben in welchem sich die Datei befindet
 	// dieser Komment wird mit in die Query geschleust
 	public String Comment = "Erstellt mit Java";
-	// anschließend folgen !WICHTGE! SQL daten
+	// anschließend folgen !WICHTIGE! SQL daten
 	public String user = "TestUser"; // User zum arbeiten mit der SQL Datenbnak
 	public String pw = "TestUser"; // das Password des Users
 	public String serverName = "ACER-2016\\SQLEXPRESS"; // Der Server-Name des SQL-Servers

@@ -22,7 +22,7 @@ public class DbConnect {
 	 * @param queries
 	 *            data from file
 	 */
-	public static void sendQueries(ContainerQuery queries) {
+	public static void sendQueries(ContainerQuery queries, String fileName) {
 		// Declare the JDBC objects.
 		Connection con = null;
 		CallableStatement cstmt = null;
@@ -33,7 +33,7 @@ public class DbConnect {
 			// Establish the connection.
 			con = establishConnection(ds);
 			// execute queries
-			executeQueries(queries, con);
+			executeQueries(queries, con, fileName);
 			con.close();
 		}
 		// Handle any errors that may have occurred.
@@ -65,8 +65,7 @@ public class DbConnect {
 			}
 	}
 
-	private static void executeQueries(ContainerQuery queries, Connection con) throws SQLException {
-		Statement stmt = con.createStatement();
+	private static void executeQueries(ContainerQuery queries, Connection con, String fileName) throws SQLException {
 		logger.info("starting queries");
 		// default insert query for preparedStatement
 		String insertDefault = "INSERT INTO vv_mastervalues_upload"
@@ -113,7 +112,7 @@ public class DbConnect {
 		logger.info("starting StoredProcedure");
 		preparedStatement = con.prepareStatement("exec vvsp_import_uploadV2 ?, ?, ?, ?;");
 		preparedStatement.setString(stmtCount++, Converter.config.Source_ID); // SourceId
-		preparedStatement.setString(stmtCount++, Converter.config.File); // Data Origin
+		preparedStatement.setString(stmtCount++, fileName); // Data Origin
 		preparedStatement.setString(stmtCount++, Converter.config.URLSource); // UrlSource
 		preparedStatement.setString(stmtCount++, Converter.config.Comment); // Comment
 		preparedStatement.executeUpdate();

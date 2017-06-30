@@ -71,7 +71,7 @@ public class Converter {
 			// changing filename -> this file is in use
 			logger.info("Occupying file: {}",file);
 			String newFile = renameFile(file);
-			DbConnect.sendQueries(Reader.read(config.Path + newFile));
+			DbConnect.sendQueries(Reader.read(config.Path + newFile), file.getName());
 			moveFile(config.Path + newFile, config.Path + "bak\\" + file.getName());
 		} else {
 			logger.error("File not found: {}",file);

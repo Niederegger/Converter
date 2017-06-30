@@ -67,7 +67,7 @@ public class ContainerRow {
 		String fieldName;
 		for (int i = 0; i < fieldAmt; i++) {
 			fieldName = Converter.config.MasterValuesFields[i];
-			fieldValue = columns[Converter.config.Positions[i]];
+			fieldValue = columns[Converter.config.Positions[i]].trim();
 			values[i] = controlValue(fieldValue, fieldName);
 		}
 	}
