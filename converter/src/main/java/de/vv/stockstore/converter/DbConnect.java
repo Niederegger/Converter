@@ -26,7 +26,7 @@ public class DbConnect {
 	 * @param entries
 	 *            data from file
 	 */
-	public static void sendQueries(EntryList entries) {
+	public static void sendQueries(EntryList entries, String fileName) {
 		// Declare the JDBC objects.
 		Connection con = null;
 		CallableStatement cstmt = null;
@@ -37,7 +37,7 @@ public class DbConnect {
 			// Establish the connection.
 			con = establishConnection(ds);
 			// execute queries
-			executeQueries(entries, con);
+			executeQueries(entries, con, fileName);
 			con.close();
 		}
 		// Handle any errors that may have occurred.
@@ -69,21 +69,16 @@ public class DbConnect {
 			}
 	}
 
-	private static void executeQueries(EntryList entries, Connection con) throws SQLException {
+	private static void executeQueries(EntryList entries, Connection con, String fileName) throws SQLException {
 		Statement stmt = con.createStatement();
 		logger.info("starting queries");
 		// default insert query for preparedStatement
 		String insertDefault = "INSERT INTO vv_mastervalues_upload"
-				+ "(MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_DATA_ORIGIN, MVU_URLSOURCE, MVU_COMMENT) VALUES"
-				+ "(?,?,?,?,?,?,?,?)";
-		// date insert query for preparedStatement
-		String insertWithDate = "INSERT INTO vv_mastervalues_upload"
-				+ "(MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_AS_OF_DATE, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_DATA_ORIGIN, MVU_URLSOURCE, MVU_COMMENT) VALUES"
-				+ "(?,?,?,?,?,?,?,?,?)";
+				+ "(MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_COMMENT) VALUES"
+				+ "(?,?,?,?,?,?);";
 
 		PreparedStatement preparedStatement = null;
 		int stmtCount = 1;
-		boolean aod = false;
 		int count = 0;
 		int done = 0;
 		for (Entry entry : entries.response.docs) {
@@ -98,8 +93,6 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp._root_);
 			preparedStatement.setString(stmtCount++, entry._root_);
-			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
-			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
 			preparedStatement.executeUpdate();
 			stmtCount = 1;
@@ -110,8 +103,6 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp.sha_modificationDateStr);
 			preparedStatement.setString(stmtCount++, entry.sha_modificationDateStr);
-			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
-			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
 			preparedStatement.executeUpdate();
 			stmtCount = 1;
@@ -122,8 +113,6 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp.sha_countryCode);
 			preparedStatement.setString(stmtCount++, entry.sha_countryCode);
-			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
-			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
 			preparedStatement.executeUpdate();
 			stmtCount = 1;
@@ -134,8 +123,6 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp.sha_relevantAuthority);
 			preparedStatement.setString(stmtCount++, entry.sha_relevantAuthority);
-			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
-			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
 			preparedStatement.executeUpdate();
 			stmtCount = 1;
@@ -146,8 +133,6 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp.sha_exchangeRate);
 			preparedStatement.setString(stmtCount++, entry.sha_exchangeRate);
-			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
-			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
 			preparedStatement.executeUpdate();
 			stmtCount = 1;
@@ -158,8 +143,6 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp.sha_name);
 			preparedStatement.setString(stmtCount++, entry.sha_name);
-			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
-			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
 			preparedStatement.executeUpdate();
 			stmtCount = 1;
@@ -170,8 +153,6 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp.sha_sms);
 			preparedStatement.setString(stmtCount++, entry.sha_sms);
-			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
-			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
 			preparedStatement.executeUpdate();
 			stmtCount = 1;
@@ -182,8 +163,6 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp.sha_status);
 			preparedStatement.setString(stmtCount++, entry.sha_status);
-			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
-			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
 			preparedStatement.executeUpdate();
 			stmtCount = 1;
@@ -194,8 +173,6 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp.sha_dailyTransactions);
 			preparedStatement.setString(stmtCount++, entry.sha_dailyTransactions);
-			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
-			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
 			preparedStatement.executeUpdate();
 			stmtCount = 1;
@@ -206,8 +183,6 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp.id);
 			preparedStatement.setString(stmtCount++, entry.id);
-			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
-			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
 			preparedStatement.executeUpdate();
 			stmtCount = 1;
@@ -218,8 +193,6 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp.sha_type);
 			preparedStatement.setString(stmtCount++, entry.sha_type);
-			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
-			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
 			preparedStatement.executeUpdate();
 			stmtCount = 1;
@@ -230,8 +203,6 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp.sha_freeFloatRange);
 			preparedStatement.setString(stmtCount++, entry.sha_freeFloatRange);
-			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
-			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
 			preparedStatement.executeUpdate();
 			stmtCount = 1;
@@ -242,8 +213,6 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp.sha_adt);
 			preparedStatement.setString(stmtCount++, entry.sha_adt);
-			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
-			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
 			preparedStatement.executeUpdate();
 			stmtCount = 1;
@@ -254,8 +223,6 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp.sha_avt);
 			preparedStatement.setString(stmtCount++, entry.sha_avt);
-			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
-			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
 			preparedStatement.executeUpdate();
 			stmtCount = 1;
@@ -266,8 +233,6 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp._version_);
 			preparedStatement.setString(stmtCount++, entry._version_);
-			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
-			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
 			preparedStatement.executeUpdate();
 			stmtCount = 1;
@@ -278,8 +243,6 @@ public class DbConnect {
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
 			preparedStatement.setString(stmtCount++, EntryLookUp.timestamp);
 			preparedStatement.setString(stmtCount++, entry.timestamp);
-			preparedStatement.setString(stmtCount++, Converter.config.File);// entries.dataOrigin);
-			preparedStatement.setString(stmtCount++, Converter.config.URLSource);// entries.urlSource);
 			preparedStatement.setString(stmtCount++, Converter.config.Comment);// entries.comment);
 			preparedStatement.executeUpdate();
 			stmtCount = 1;
@@ -290,8 +253,14 @@ public class DbConnect {
 				count = 0;
 			}
 		}
+		stmtCount = 1;
 		logger.info("starting StoredProcedure");
-		stmt.executeUpdate("exec vvsp_import_upload");
+		preparedStatement = con.prepareStatement("exec vvsp_import_uploadV2 ?, ?, ?, ?;");
+		preparedStatement.setString(stmtCount++, Converter.config.Source_ID); // SourceId
+		preparedStatement.setString(stmtCount++, fileName); // Data Origin
+		preparedStatement.setString(stmtCount++, Converter.config.URLSource); // UrlSource
+		preparedStatement.setString(stmtCount++, Converter.config.Comment); // Comment
+		preparedStatement.executeUpdate();
 		logger.info("completed StoredProcedure");
 	}
 

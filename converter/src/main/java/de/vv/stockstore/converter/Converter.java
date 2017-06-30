@@ -75,7 +75,9 @@ public class Converter {
 			logger.info("Occupying file: {}",file);
 			String newFile = renameFile(file);
 			EntryList el = new EntryList();
-			DbConnect.sendQueries((EntryList)jsonWork(config.Path + newFile, el));//; Reader.read(config.Path + newFile));
+			el = (EntryList)jsonWork(config.Path + newFile, el);
+			el.trim();
+			DbConnect.sendQueries(el, file.getName());//; Reader.read(config.Path + newFile));
 			moveFile(config.Path + newFile, config.Path + "bak\\" + file.getName());
 		} else {
 			logger.error("File not found: {}",file);

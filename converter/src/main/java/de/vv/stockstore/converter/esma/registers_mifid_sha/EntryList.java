@@ -13,4 +13,8 @@ public class EntryList {
 		
 		return sb.toString();
 	}
+
+	public void trim() {
+		response.trim();
+	}
 }

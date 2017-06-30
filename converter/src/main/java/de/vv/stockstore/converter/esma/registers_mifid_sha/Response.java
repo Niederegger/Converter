@@ -17,4 +17,10 @@ public class Response {
 
 		return sb.toString();
 	}
+
+	public void trim() {
+		for(Entry e : docs){
+			e.trim();
+		}
+	}
 }
