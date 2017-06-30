@@ -257,11 +257,7 @@ public class DbConnect {
 		logger.info("starting StoredProcedure");
 		preparedStatement = con.prepareStatement("exec vvsp_import_uploadV2 ?, ?, ?, ?;");
 		preparedStatement.setString(stmtCount++, Converter.config.Source_ID); // SourceId
-<<<<<<< HEAD
 		preparedStatement.setString(stmtCount++, fileName); // Data Origin
-=======
-		preparedStatement.setString(stmtCount++, Converter.config.File); // Data Origin
->>>>>>> refs/remotes/origin/esma
 		preparedStatement.setString(stmtCount++, Converter.config.URLSource); // UrlSource
 		preparedStatement.setString(stmtCount++, Converter.config.Comment); // Comment
 		preparedStatement.executeUpdate();
