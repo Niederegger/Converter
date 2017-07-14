@@ -69,12 +69,12 @@ public class DbConnect {
 		logger.info("starting queries");
 		// default insert query for preparedStatement
 		String insertDefault = "INSERT INTO vv_mastervalues_upload"
-				+ "(MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_COMMENT) VALUES"
-				+ "(?,?,?,?,?,?);";
+				+ "(MVU_DATA_ORIGIN, MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_COMMENT) VALUES"
+				+ "(?,?,?,?,?,?,?);";
 		// date insert query for preparedStatement
 		String insertWithDate = "INSERT INTO vv_mastervalues_upload"
-				+ "(MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_AS_OF_DATE, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_COMMENT) VALUES"
-				+ "(?,?,?,?,?,?,?);";
+				+ "(MVU_DATA_ORIGIN, MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_AS_OF_DATE, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_COMMENT) VALUES"
+				+ "(?,?,?,?,?,?,?,?);";
 
 		PreparedStatement preparedStatement = null;
 		int stmtCount = 1;
@@ -87,6 +87,7 @@ public class DbConnect {
 				// loads prepared statement depending whether needed as of date
 				// or not
 				preparedStatement = con.prepareStatement(aod ? insertWithDate : insertDefault);
+				preparedStatement.setString(stmtCount++, fileName); // Data Origin
 				preparedStatement.setString(stmtCount++, queries.sourceId);
 				if (qr == null) {
 					logger.error("Invalid ContainerRow {}", qr);
