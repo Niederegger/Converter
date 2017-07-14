@@ -47,7 +47,7 @@ public class Reader {
 	public static ContainerRow workLine(String line) {
 
 		String[] columns = line.split(Converter.config.Seperator);
-		if (columns.length == 123) { // needs to be parameterized
+		if (columns.length == Converter.config.RowAmount) { // needs to be parameterized
 			// i -ISIN
 			// m - MIC
 			// d - Date
@@ -56,6 +56,7 @@ public class Reader {
 
 			return row_container;
 		} else {
+			System.out.println("mismatch: "+columns.length);
 			logger.trace(line);
 			return null;
 		}
@@ -73,14 +74,16 @@ public class Reader {
 		String[] ret = new String[3];
 		ret[0] = line[Converter.config.IsinPosition].trim(); // ISIN
 		ret[1] = line[Converter.config.MicPosition].trim(); // MIC
-		ret[2] = line[Converter.config.DatePosition].trim(); // AS_OF_DATE
-		String[] date = ret[2].split("\\.");
-		if (date.length != 3) { // date is supposed to vontains 3 values:
-								// yyyy,mm,dd
-			logger.error("Corrupted Date: {}", ret[2]);
-			ret[2] = null;
-		} else { // changing date order
-			ret[2] = (date[2] + date[1] + date[0]).trim();
+		if(Converter.config.DatePosition != -1){
+			ret[2] = line[Converter.config.DatePosition].trim(); // AS_OF_DATE
+			String[] date = ret[2].split("\\.");
+			if (date.length != 3) { // date is supposed to vontains 3 values:
+									// yyyy,mm,dd
+				logger.error("Corrupted Date: {}", ret[2]);
+				ret[2] = null;
+			} else { // changing date order
+				ret[2] = (date[2] + date[1] + date[0]).trim();
+			}
 		}
 		return ret;
 	}
