@@ -102,14 +102,21 @@ public class DbConnect {
 				preparedStatement.executeUpdate();
 				stmtCount = 1;
 			}
-			if (count++ > 1000) {
+			if (count++ > 10000) { // reduce Overhead
 				done++;
-				logger.info("Queries sent: {}", done * 9000);
+				execUpdateProcedure(con, fileName);
 				count = 0;
 			}
 		}
 		logger.info("starting StoredProcedure");
-		stmtCount = 1;
+		execUpdateProcedure(con, fileName);
+		logger.info("completed StoredProcedure");
+		logger.info("completed StoredProcedure");
+	}
+
+	private static void execUpdateProcedure(Connection con, String fileName) throws SQLException {
+		PreparedStatement preparedStatement;
+		int stmtCount = 1;
 		logger.info("starting StoredProcedure");
 		preparedStatement = con.prepareStatement("exec vvsp_import_uploadV2 ?, ?, ?, ?;");
 		preparedStatement.setString(stmtCount++, Converter.config.Source_ID); // SourceId
@@ -117,8 +124,6 @@ public class DbConnect {
 		preparedStatement.setString(stmtCount++, Converter.config.URLSource); // UrlSource
 		preparedStatement.setString(stmtCount++, Converter.config.Comment); // Comment
 		preparedStatement.executeUpdate();
-		logger.info("completed StoredProcedure");
-		logger.info("completed StoredProcedure");
 	}
 
 	private static Connection establishConnection(SQLServerDataSource ds) throws SQLServerException {

@@ -72,6 +72,7 @@ public class Config {
 	public int DatePosition = 0; // Position des Datums innerhalb der Tabelle
 	public int IsinPosition = 2; // Position der ISIN innerhalb der Tabell
 	public int MicPosition = 6; // Position der MIC innerhalb der Tabelle
+	public int RowAmount = 6; // Position der MIC innerhalb der Tabelle
 	
 	public String Seperator = ";"; // Der Seperator der genutzt wird um in der csv File die Trennung  der einzelnen Einträge zu erstellen
 	
