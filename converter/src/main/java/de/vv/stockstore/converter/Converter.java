@@ -20,7 +20,7 @@ public class Converter {
 
 	public static Config config = new Config();
 
-	/**
+	/** 
 	 * This function is used to print the Config, so one has the right format
 	 */
 	public static void printConfig() {
@@ -71,8 +71,9 @@ public class Converter {
 			// changing filename -> this file is in use
 			logger.info("Occupying file: {}",file);
 			String newFile = renameFile(file);
-			DbConnect.sendQueries(Reader.read(config.Path + newFile), file.getName());
-			moveFile(config.Path + newFile, config.Path + "bak\\" + file.getName());
+			Reader.read(config.Path + newFile, file.getName());
+//			DbConnect.sendQueries(Reader.read(config.Path + newFile), newFile);
+			moveFile(config.Path + newFile, config.Path + "bak\\" + file);
 		} else {
 			logger.error("File not found: {}",file);
 		}

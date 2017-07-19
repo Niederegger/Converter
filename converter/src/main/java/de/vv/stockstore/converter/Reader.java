@@ -16,7 +16,7 @@ public class Reader {
 	 * @param file
 	 * @return
 	 */
-	public static ContainerQuery read(String file) {
+	public static ContainerQuery read(String file, String fileName) {
 		logger.info("Converter start.");
 		ContainerQuery query_container = new ContainerQuery(Converter.config.Source_ID, Converter.config.File,
 				Converter.config.URLSource, Converter.config.Comment);
@@ -24,13 +24,18 @@ public class Reader {
 			String line;
 			int counter = 0;
 			while ((line = br.readLine()) != null) {
-				if (counter >= 5) {
+				if (counter >= Converter.config.RowStart) {//>= 5) {
 					ContainerRow qr = workLine(line);
 					if (qr != null)
 						query_container.add(qr);
+					if(query_container.rowAmount() >= Converter.config.MaxRowsTillInsert){
+						DbConnect.sendQueries(query_container, fileName);
+						query_container.resetRows();
+					}
 				}
 				counter++;
 			}
+			DbConnect.execUpdateProcedure(fileName);
 		} catch (IOException e) {
 			logger.error("IOException: {}",e.getMessage());
 		}

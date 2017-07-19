@@ -39,5 +39,13 @@ public class ContainerQuery {
 	public void add(ContainerRow cr) {
 		rows.add(cr);
 	}
+	
+	public void resetRows(){
+		rows = new Vector<ContainerRow>();
+	}
+	
+	public int rowAmount(){
+		return rows.size();
+	}
 
 }

@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,8 +78,6 @@ public class DbConnect {
 		PreparedStatement preparedStatement = null;
 		int stmtCount = 1;
 		boolean aod = false;
-		int count = 0;
-		int done = 0;
 		for (ContainerRow qr : queries.rows) {
 			for (int i = 0; i < Converter.config.MasterValuesFields.length; i++) {
 				aod = Converter.config.MV_AS_OF_DATE_NEEDED[i];
@@ -102,28 +99,31 @@ public class DbConnect {
 				preparedStatement.executeUpdate();
 				stmtCount = 1;
 			}
-			if (count++ > 10000) { // reduce Overhead
-				done++;
-				execUpdateProcedure(con, fileName);
-				count = 0;
-			}
 		}
-		logger.info("starting StoredProcedure");
-		execUpdateProcedure(con, fileName);
-		logger.info("completed StoredProcedure");
-		logger.info("completed StoredProcedure");
 	}
 
-	private static void execUpdateProcedure(Connection con, String fileName) throws SQLException {
-		PreparedStatement preparedStatement;
-		int stmtCount = 1;
-		logger.info("starting StoredProcedure");
-		preparedStatement = con.prepareStatement("exec vvsp_import_uploadV2 ?, ?, ?, ?;");
-		preparedStatement.setString(stmtCount++, Converter.config.Source_ID); // SourceId
-		preparedStatement.setString(stmtCount++, fileName); // Data Origin
-		preparedStatement.setString(stmtCount++, Converter.config.URLSource); // UrlSource
-		preparedStatement.setString(stmtCount++, Converter.config.Comment); // Comment
-		preparedStatement.executeUpdate();
+	public static void execUpdateProcedure(String fileName) {
+		Connection con;
+		try {
+			con = establishConnection(new SQLServerDataSource());
+			PreparedStatement preparedStatement;
+			int stmtCount = 1;
+			logger.info("starting StoredProcedure");
+			preparedStatement = con.prepareStatement("exec vvsp_import_uploadV2 ?, ?, ?, ?;");
+			preparedStatement.setString(stmtCount++, Converter.config.Source_ID); // SourceId
+			preparedStatement.setString(stmtCount++, fileName); // Data Origin
+			preparedStatement.setString(stmtCount++, Converter.config.URLSource); // UrlSource
+			preparedStatement.setString(stmtCount++, Converter.config.Comment); // Comment
+			preparedStatement.executeUpdate();
+			con.close();
+		} catch (SQLServerException e) {
+			logger.error("SQLServerException: {}", e.getMessage());
+			e.printStackTrace();
+		} catch (SQLException e) {
+			logger.error("SQLException: {}", e.getMessage());
+		}
+		
+		
 	}
 
 	private static Connection establishConnection(SQLServerDataSource ds) throws SQLServerException {
@@ -135,7 +135,6 @@ public class DbConnect {
 		ds.setPortNumber(Converter.config.port);
 		ds.setDatabaseName(Converter.config.dbName);
 		con = ds.getConnection();
-		logger.info("Connection successeded");
 		return con;
 	}
 
