@@ -1,18 +1,17 @@
-package de.vv.stockstore.converter;
+package de.vv.stockstore.converter.models;
 
 import java.util.Vector;
 
 /**
  * ContainerQuery stores all Queries, which are going to be inserted to DB
- * 
- * @author Alexey Gasevic
- *
  */
 public class ContainerQuery {
 	public String sourceId;
 	public String dataOrigin;
 	public String urlSource;
 	public String comment;
+	
+	// innerhalb dieses Vectors werden verarbeitete Reihen akkumuliert
 	public Vector<ContainerRow> rows = new Vector<ContainerRow>();
 
 	/**

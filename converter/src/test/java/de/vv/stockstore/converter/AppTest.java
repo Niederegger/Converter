@@ -1,5 +1,5 @@
 package de.vv.stockstore.converter;
 
-public class ConverterTest {
+public class AppTest {
 	// todo: writes some tests
 }
