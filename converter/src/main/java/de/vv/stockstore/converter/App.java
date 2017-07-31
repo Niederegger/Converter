@@ -5,9 +5,6 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
-import com.microsoft.sqlserver.jdbc.SQLServerException;
-
 public class App {
 	final static Logger logger = LoggerFactory.getLogger(App.class);
 
@@ -23,9 +20,9 @@ public class App {
 		// args[0] enthaellt den Pfad zu Config
 		// ab hier ist sicher, dass genau ein Parameter uebergeben wurde
 
-		if (BasicFunctions.initConfig(args[0]))                             // initialiserit die config-Variable
-			beginProgram();                                                   // nun kann versucht werden die Datei zu laden
-		else
+		if (BasicFunctions.initConfig(args[0])) {                            // initialiserit die config-Variable
+			 beginProgram();                                                   // nun kann versucht werden die Datei zu laden
+		} else
 			logger.error("Invalid Config: {}", args[0]);
 	}
 
@@ -35,22 +32,22 @@ public class App {
 	 */
 	public static void beginProgram() {
 		File file = BasicFunctions.getFile();																// hohlt die erste Datei, welche mit dem richtigen Namen beginnt
-		
+
 		if (file == null) {																									// falls keine File gefunden wurde, gibt's keine zum parsen
 			logger.error("File not found: {}", file);
 			return;
 		}
 
 		logger.info("Occupying file: {}", file);
-		
+
 		String occupiedFile = BasicFunctions.renameFile(file);							// benennt die Datei um, damit bekannt ist, dass diese im Betrieb ist
-		
+
 		DbConnect.establishConnection();
-		
+
 		Reader.read(config.Path + occupiedFile, file.getName());						// jetz wird die Datei geparsed und queries inserted
-		
+
 		DbConnect.closeConnection();
-		
+
 		BasicFunctions.moveFile(config.Path + occupiedFile, config.Path + "bak\\" + file.getName()); // schreibt die Datei in den bak Ordner
 
 	}

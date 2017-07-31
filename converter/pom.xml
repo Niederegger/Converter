@@ -88,7 +88,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>de.vv.stockstore.converter.Converter</mainClass>
+							<mainClass>de.vv.stockstore.converter.App</mainClass>
 							<classpathPrefix>dependency-jars/</classpathPrefix>
 						</manifest>
 					</archive>

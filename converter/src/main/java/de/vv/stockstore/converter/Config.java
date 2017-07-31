@@ -81,6 +81,7 @@ public class Config {
 	
 	public String Comment = "Erstellt mit Java";
 	public String Source_ID = "DBAG"; 										// Die ID die diesem Dokument zugewießen ist
+	public String DataOrigin = "Deutsceh Börse Xetra - Börse Frankfurt"; 										// URL Title der Website
 																									  		// das ist die Website, von der das Dokument runtergeladen wurde
 	public String URLSource = "http://www.deutsche-boerse-cash-market.com/dbcm-de/instrumente-statistiken/alle-handelbaren-instrumente/boersefrankfurt";
 	
