@@ -1,22 +1,11 @@
 package de.vv.stockstore.converter;
 
 public class Config {
-	/**
-	 * MasterValuesTable (mvt) represents MasterTable
-	 * currently not in use?!
-	 */
-	public String[] MasterValuesTable = { 
-			"MVU_SOURCE_ID", 
-			"MVU_ISIN", 
-			"MVU_MIC", 
-			"MVU_AS_OF_DATE",
-			"MVU_FIELDNAME",
-			"MVU_STRINGVALUE", 
-			"MVU_DATA_ORIGIN", 
-			"MVU_URLSOURCE", 
-			"MVU_COMMENT" 
-			};
 
+	//--------------------------------------------------------------------------------------------------------------------
+	// Aufbau der Tabelle
+	//--------------------------------------------------------------------------------------------------------------------
+	
 	/**
 	 * MasterValuesFields (mvf) represents positions of interest
 	 * these values are going to be inserted into fieldname
@@ -74,7 +63,7 @@ public class Config {
 	public int MicPosition = 6; // Position der MIC innerhalb der Tabelle
 	
 	public String Seperator = ";"; // Der Seperator der genutzt wird um in der csv File die Trennung  der einzelnen Einträge zu erstellen
-	
+	public String DataOrigin = "Esma Reigster"; 										// URL Title der Website
 	public String Source_ID = "DBAG"; // Die ID die diesem Dokument zugewießen ist
 	// das ist die Website, von der das Dokument runtergeladen wurde
 	public String URLSource = "http://www.deutsche-boerse-cash-market.com/dbcm-de/instrumente-statistiken/alle-handelbaren-instrumente/boersefrankfurt"; 

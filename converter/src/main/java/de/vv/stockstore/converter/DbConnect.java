@@ -24,7 +24,7 @@ public class DbConnect {
 	 * sending all queries to Database
 	 * 
 	 * @param entries
-	 *            data from file
+	 *          data from file
 	 */
 	public static void sendQueries(EntryList entries, String fileName) {
 		// Declare the JDBC objects.
@@ -74,8 +74,8 @@ public class DbConnect {
 		logger.info("starting queries");
 		// default insert query for preparedStatement
 		String insertDefault = "INSERT INTO vv_mastervalues_upload"
-				+ "(MVU_DATA_ORIGIN, MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_COMMENT) VALUES"
-				+ "(?,?,?,?,?,?,?);";
+				+ "(MVU_DATA_ORIGIN, MVU_SOURCEFILE, MVU_SOURCE_ID, MVU_ISIN, MVU_MIC, MVU_FIELDNAME, MVU_STRINGVALUE, MVU_COMMENT) VALUES"
+				+ "(?,?,?,?,?,?,?,?);";
 
 		PreparedStatement preparedStatement = null;
 		int stmtCount = 1;
@@ -88,7 +88,8 @@ public class DbConnect {
 				continue;
 			}
 			preparedStatement = con.prepareStatement(insertDefault);
-			preparedStatement.setString(stmtCount++, fileName); // Data Origin
+			preparedStatement.setString(stmtCount++, Converter.config.DataOrigin);//DataOrigin
+			preparedStatement.setString(stmtCount++, fileName); // SourceFile
 			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
 			preparedStatement.setString(stmtCount++, "");// entry.MIC);
@@ -99,6 +100,7 @@ public class DbConnect {
 			stmtCount = 1;
 			// sha_modificationDateStr
 			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.DataOrigin); //DataOrigin 
 			preparedStatement.setString(stmtCount++, fileName); // Data Origin
 			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
@@ -110,6 +112,7 @@ public class DbConnect {
 			stmtCount = 1;
 			// sha_countryCode
 			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.DataOrigin); //DataOrigin 
 			preparedStatement.setString(stmtCount++, fileName); // Data Origin
 			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
@@ -121,6 +124,7 @@ public class DbConnect {
 			stmtCount = 1;
 			// sha_relevantAuthority
 			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.DataOrigin); //DataOrigin 
 			preparedStatement.setString(stmtCount++, fileName); // Data Origin
 			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
@@ -132,6 +136,7 @@ public class DbConnect {
 			stmtCount = 1;
 			// sha_exchangeRate
 			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.DataOrigin); //DataOrigin
 			preparedStatement.setString(stmtCount++, fileName); // Data Origin
 			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
@@ -143,6 +148,7 @@ public class DbConnect {
 			stmtCount = 1;
 			// sha_name
 			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.DataOrigin); //DataOrigin
 			preparedStatement.setString(stmtCount++, fileName); // Data Origin
 			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
@@ -154,6 +160,7 @@ public class DbConnect {
 			stmtCount = 1;
 			// sha_sms
 			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.DataOrigin); //DataOrigin
 			preparedStatement.setString(stmtCount++, fileName); // Data Origin
 			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
@@ -165,6 +172,7 @@ public class DbConnect {
 			stmtCount = 1;
 			// sha_status
 			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.DataOrigin); //SourceFile 
 			preparedStatement.setString(stmtCount++, fileName); // Data Origin
 			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
@@ -176,6 +184,7 @@ public class DbConnect {
 			stmtCount = 1;
 			// sha_dailyTransactions
 			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.DataOrigin); //SourceFile 
 			preparedStatement.setString(stmtCount++, fileName); // Data Origin
 			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
@@ -187,6 +196,7 @@ public class DbConnect {
 			stmtCount = 1;
 			// id
 			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.DataOrigin); //SourceFile 
 			preparedStatement.setString(stmtCount++, fileName); // Data Origin
 			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
@@ -198,6 +208,7 @@ public class DbConnect {
 			stmtCount = 1;
 			// sha_type
 			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.DataOrigin); //SourceFile 
 			preparedStatement.setString(stmtCount++, fileName); // Data Origin
 			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
@@ -209,6 +220,7 @@ public class DbConnect {
 			stmtCount = 1;
 			// sha_freeFloatRange
 			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.DataOrigin); //SourceFile 
 			preparedStatement.setString(stmtCount++, fileName); // Data Origin
 			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
@@ -220,6 +232,7 @@ public class DbConnect {
 			stmtCount = 1;
 			// sha_adt
 			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.DataOrigin); //SourceFile 
 			preparedStatement.setString(stmtCount++, fileName); // Data Origin
 			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
@@ -231,6 +244,7 @@ public class DbConnect {
 			stmtCount = 1;
 			// sha_avt
 			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.DataOrigin); //SourceFile 
 			preparedStatement.setString(stmtCount++, fileName); // Data Origin
 			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
@@ -242,6 +256,7 @@ public class DbConnect {
 			stmtCount = 1;
 			// _version_
 			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.DataOrigin); //SourceFile 
 			preparedStatement.setString(stmtCount++, fileName); // Data Origin
 			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
@@ -253,6 +268,7 @@ public class DbConnect {
 			stmtCount = 1;
 			// timestamp
 			preparedStatement = con.prepareStatement(insertDefault);
+			preparedStatement.setString(stmtCount++, Converter.config.DataOrigin);//SourceFile 
 			preparedStatement.setString(stmtCount++, fileName); // Data Origin
 			preparedStatement.setString(stmtCount++, Converter.config.Source_ID);// entries.sourceId);
 			preparedStatement.setString(stmtCount++, entry.sha_isin);
@@ -271,10 +287,11 @@ public class DbConnect {
 		}
 		stmtCount = 1;
 		logger.info("starting StoredProcedure");
-		preparedStatement = con.prepareStatement("exec vvsp_import_uploadV2 ?, ?, ?, ?;");
+		preparedStatement = con.prepareStatement("exec vvsp_import_uploadV3 ?, ?, ?, ?, ?;");
 		preparedStatement.setString(stmtCount++, Converter.config.Source_ID); // SourceId
-		preparedStatement.setString(stmtCount++, fileName); // Data Origin
+		preparedStatement.setString(stmtCount++, Converter.config.DataOrigin); // Data Origin
 		preparedStatement.setString(stmtCount++, Converter.config.URLSource); // UrlSource
+		preparedStatement.setString(stmtCount++, fileName); // Filename
 		preparedStatement.setString(stmtCount++, Converter.config.Comment); // Comment
 		preparedStatement.executeUpdate();
 		logger.info("completed StoredProcedure");
