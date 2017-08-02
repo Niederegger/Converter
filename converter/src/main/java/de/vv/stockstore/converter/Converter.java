@@ -1,9 +1,12 @@
 package de.vv.stockstore.converter;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 
 import org.slf4j.Logger;
@@ -160,7 +163,8 @@ public class Converter {
 	public static boolean loadConfig(String file) {
 		Gson gson = new Gson();
 		try {
-			config = gson.fromJson(new FileReader(file), Config.class);
+			config = gson.fromJson(new InputStreamReader(new FileInputStream(file), "UTF-8"), Config.class);
+//config = gson.fromJson(new FileReader(file), Config.class);
 			return true;
 		} catch (JsonSyntaxException e) {
 			logger.error("JsonSyntaxException: {}", e.getMessage());
@@ -168,6 +172,9 @@ public class Converter {
 			logger.error("JsonIOException: {}", e.getMessage());
 		} catch (FileNotFoundException e) {
 			logger.error("FileNotFoundException: {}", e.getMessage());
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return false;
 	}
