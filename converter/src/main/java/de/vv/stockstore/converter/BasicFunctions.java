@@ -1,8 +1,10 @@
 package de.vv.stockstore.converter;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 
 import com.google.gson.Gson;
@@ -23,7 +25,8 @@ public class BasicFunctions {
 
 		Gson gson = new Gson();
 		try {  																															// lade das Json Object aus der Text Datei in die config-Variable
-			App.config = gson.fromJson(new FileReader(file), Config.class);		// setzt die config-Variable in App.config
+			App.config = gson.fromJson(new InputStreamReader(new FileInputStream(file), "UTF-8"), Config.class);
+//			App.config = gson.fromJson(new FileReader(file), Config.class);		// setzt die config-Variable in App.config
 			return true;
 		} catch (Exception e) {
 			App.logger.error("Exception: {}", e.getMessage());

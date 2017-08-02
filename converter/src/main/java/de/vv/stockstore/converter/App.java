@@ -22,6 +22,8 @@ public class App {
 
 		if (BasicFunctions.initConfig(args[0])) {                            // initialiserit die config-Variable
 			 beginProgram();                                                   // nun kann versucht werden die Datei zu laden
+//				System.out.println(config.DataOrigin);
+//				BasicFunctions.printConfig();
 		} else
 			logger.error("Invalid Config: {}", args[0]);
 	}
